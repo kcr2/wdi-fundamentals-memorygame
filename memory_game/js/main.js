@@ -7,39 +7,72 @@ var cards = [
   {
     rank: "queen",
     suit: "diamonds",
-    cardImage: "image/queen-of-diamonds.png"
+    cardImage: "images/queen-of-diamonds.png"
   },
   {
     rank: "king",
     suit: "hearts",
-    cardImage: "image/king-of-hearts.png"
+    cardImage: "images/king-of-hearts.png"
   },
   {
     rank: "king",
     suit: "diamonds",
-    cardImage: "image/king-of-diamonds.png"
+    cardImage: "images/king-of-diamonds.png"
   }
 ];
-var cardsInPlay = [];
 
+var cardsInPlay = [];
+var cardCount = 0;
+//checks if cards match and resets if no match or all cards have been flipped.
+//calls addpoint() if match.
 function checkForMatch() {
-  if (cardsInPlay.length === 2) {
+  cardCount += 1;
+  if (cardCount === 4) {
+    cardCount = 0;
+    document.getElementById('game-board').innerHTML = "";
+    createBoard();
+  }
+  if (cardsInPlay.length % 2 === 0) {
     if (cardsInPlay[0] === cardsInPlay[1]) {
-      console.log("you found a match");
+      alert("you found a match");
+      cardsInPlay = [];
+      addpoint();
     }
     else {
-      console.log("sorry try again");
+      alert("sorry try again");
+      document.getElementById('game-board').innerHTML = "";
+      createBoard();
+      cardsInPlay = [];
     }
   }
 }
-
-function flipCard(cardId) {
+// increases the number inside the <span> in the html.
+function addpoint() {
+  var points = parseInt(document.getElementById('points').textContent);
+  console.log(points);
+  points += 1;
+  document.getElementById('points').innerHTML = points;
+}
+//flips card and gives it the image. adds card to cards in play array.
+function flipCard() {
+  var cardId = this.getAttribute('data-id');
   console.log("User flipped " + cards[cardId].rank);
   console.log(cards[cardId].cardImage);
   console.log(cards[cardId].suit);
   cardsInPlay.push(cards[cardId].rank);
+
+  this.setAttribute('src', cards[cardId].cardImage);
   checkForMatch();
 }
-
-flipCard(0);
-flipCard(2);
+//Creates the game board and gives card attributes.
+function createBoard () {
+  for (var i = 0; i < cards.length; i++){
+    var cardElement = document.createElement('img');
+    cardElement.setAttribute('src', 'images/back.png');
+    cardElement.setAttribute('data-id', i);
+    cardElement.setAttribute('data-id', i);
+    cardElement.addEventListener('click', flipCard);
+    document.getElementById('game-board').appendChild(cardElement);
+  }
+}
+createBoard();
